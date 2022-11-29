@@ -130,6 +130,7 @@ contract LAN {
         });
         
             IERC721 NFT = IERC721(_collectionAddress);
+   
             NFT.transferFrom( msg.sender,address(this), _nftId);
 
         bids[count][0].bidTime = block.timestamp;
@@ -250,8 +251,9 @@ contract LAN {
         Bid memory latestBid = bids[_poolId][loan.numBids];
 
         IERC20(loan.token).transferFrom(msg.sender, address(this), _amount);
+        uint loanValue= _calculateLoanValue(_poolId);
         if (
-            _amount + userPoolReserve[_poolId] >= _calculateLoanValue(_poolId)
+            _amount + userPoolReserve[_poolId] >= loanValue
         ) {
             // End loan
             IERC721 NFT = IERC721(loan.collectionAddress);
@@ -328,10 +330,13 @@ contract LAN {
         uint256 timeElapsed;
 
 
-return 0;
-            // latestBid.bidAmount +
-            // (((latestBid.bidAmount.mul(loan.apr)).div( 10**18)).mul(timeElapsed)).div(
-            // SECONDS_IN_ONE_YEAR);
+//test see how this works
+return 
+             latestBid.bidAmount +
+             (((latestBid.bidAmount *(loan.apr))
+              /( 10**18))
+              *(timeElapsed))/(
+            SECONDS_IN_ONE_YEAR);
     
            
     }
@@ -354,26 +359,24 @@ function getLoan(uint256 _poolId) external view returns (
         uint256 apr, 
        // uint256 nftId, 
         uint256 startTime, 
-       // uint256 endTime, 
-        uint256 numBids,
+        uint256 endTime, 
+        uint256 numBids
        // bool liquidatable,
-        bool whitelisted
+        //bool whitelisted
 ){
-        return 
-        (
+        return (
         loans[_poolId].owner, 
         loans[_poolId].token, 
-        //loans[_poolId].operator,
         loans[_poolId].oracleAddress,        
         //loans[_poolId].collectionAddress, 
         loans[_poolId].apr, 
        // loans[_poolId].nftId, 
         loans[_poolId].time.startTime, 
-        //loans[_poolId].time.endTime, 
-        loans[_poolId].numBids,
+        loans[_poolId].time.endTime, 
+        loans[_poolId].numBids
         //loans[_poolId].liquidatable,
-        loans[_poolId].whitelisted)
-        ;
+        //loans[_poolId].whitelisted)
+        );
     }
     
 }
